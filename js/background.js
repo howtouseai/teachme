@@ -203,34 +203,254 @@ async function callGoogleAI(content, settings) {
   return simulateAPICall(content);
 }
 
+// Google AI API call
+async function callGoogleAI(content, settings) {
+  // Prepare the content (trim if too long)
+  const trimmedContent = content.length > settings.maxContentLength 
+    ? content.substring(0, settings.maxContentLength) + '...(content truncated)'
+    : content;
+    
+  const apiKey = settings.apiKey;
+  
+  try {
+    const response = await fetch('https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `You are a helpful tutor using the Teachme Technique. 
+                      Your task is to explain the following content in simple terms that anyone could understand,
+                      avoiding jargon and using analogies where helpful.
+                      
+                      After your explanation, provide 4 follow-up questions that would test the user's understanding
+                      and help them identify any gaps in their knowledge.
+                      
+                      Format your response in two sections:
+                      1. Your clear explanation
+                      2. Follow-up questions as a numbered list
+                      
+                      Here is the content to explain: ${trimmedContent}`
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        }
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Unknown API error');
+    }
+    
+    // Process the API response - Gemini returns data in a different format than OpenAI
+    const aiResponse = data.candidates[0].content.parts[0].text;
+    
+    // Extract explanation and questions from the response
+    const splitResponse = processAIResponse(aiResponse);
+    
+    return splitResponse;
+  } catch (error) {
+    console.error('Google AI API error:', error);
+    throw error;
+  }
+}
+
 // Anthropic API call (placeholder - implement when needed)
 async function callAnthropic(content, settings) {
   // Implement Anthropic Claude API integration
   return simulateAPICall(content);
 }
 
+// Anthropic API call
+async function callAnthropic(content, settings) {
+  // Prepare the content (trim if too long)
+  const trimmedContent = content.length > settings.maxContentLength 
+    ? content.substring(0, settings.maxContentLength) + '...(content truncated)'
+    : content;
+    
+  const apiKey = settings.apiKey;
+  const model = settings.apiModel || 'claude-2.1';
+  
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 1024,
+        messages: [
+          {
+            role: 'user',
+            content: `You are a helpful tutor using the Teachme Technique. 
+                     Your task is to explain the following content in simple terms that anyone could understand,
+                     avoiding jargon and using analogies where helpful.
+                     
+                     After your explanation, provide 4 follow-up questions that would test the user's understanding
+                     and help them identify any gaps in their knowledge.
+                     
+                     Format your response in two sections:
+                     1. Your clear explanation
+                     2. Follow-up questions as a numbered list
+                     
+                     Here is the content to explain: ${trimmedContent}`
+          }
+        ],
+        temperature: 0.7
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'Unknown API error');
+    }
+    
+    // Process the API response - Claude returns data in a different format than OpenAI
+    const aiResponse = data.content[0].text;
+    
+    // Extract explanation and questions from the response
+    const splitResponse = processAIResponse(aiResponse);
+    
+    return splitResponse;
+  } catch (error) {
+    console.error('Anthropic API error:', error);
+    throw error;
+  }
+}
+
 // Process AI response to extract explanation and questions
 function processAIResponse(aiResponse) {
-  // This is a simple parser - you might want to improve this based on actual API responses
-  
   // Default values in case parsing fails
   let explanation = aiResponse;
   let followUpQuestions = [];
   
-  // Try to extract questions (looking for numbered lists, bullet points, etc.)
-  const questionMatches = aiResponse.match(/\d+\.\s+(.+?)(?=\d+\.|$)/gs) || 
-                          aiResponse.match(/\n-\s+(.+)/g) ||
-                          aiResponse.match(/\n•\s+(.+)/g);
-  
-  if (questionMatches && questionMatches.length >= 3) {
-    // If we found what looks like questions, extract them
-    followUpQuestions = questionMatches.map(q => q.trim().replace(/^\d+\.\s+|-\s+|•\s+/, ''));
+  try {
+    // First attempt: Try to separate based on section headings or keywords
+    const explanationSectionPatterns = [
+      /explanation:/i,
+      /here's a simple explanation:/i,
+      /let me explain this:/i,
+      /understanding this concept:/i,
+      /in simple terms:/i,
+      /^1\.\s+Your clear explanation/im
+    ];
     
-    // Remove the questions from the explanation
-    const questionsStartIndex = aiResponse.indexOf(questionMatches[0]);
-    if (questionsStartIndex > 0) {
-      explanation = aiResponse.substring(0, questionsStartIndex).trim();
+    const questionSectionPatterns = [
+      /follow[- ]up questions:/i,
+      /questions to consider:/i,
+      /test your understanding:/i,
+      /reflection questions:/i,
+      /^2\.\s+Follow-up questions/im
+    ];
+    
+    // Try to find the start of explanation section
+    let explanationStart = 0;
+    for (const pattern of explanationSectionPatterns) {
+      const match = aiResponse.match(pattern);
+      if (match) {
+        explanationStart = match.index + match[0].length;
+        break;
+      }
     }
+    
+    // Try to find the start of questions section
+    let questionsStart = aiResponse.length;
+    for (const pattern of questionSectionPatterns) {
+      const match = aiResponse.match(pattern);
+      if (match) {
+        questionsStart = match.index;
+        break;
+      }
+    }
+    
+    if (explanationStart < questionsStart) {
+      // We found both sections
+      explanation = aiResponse.substring(explanationStart, questionsStart).trim();
+      const questionsSection = aiResponse.substring(questionsStart);
+      
+      // Extract questions using multiple patterns
+      const questionMatches = questionsSection.match(/\d+\.\s+(.+?)(?=\d+\.|$)/gs) || 
+                              questionsSection.match(/\n-\s+(.+)/g) ||
+                              questionsSection.match(/\n•\s+(.+)/g) ||
+                              questionsSection.match(/\*\s+(.+)/g);
+                              
+      if (questionMatches && questionMatches.length > 0) {
+        followUpQuestions = questionMatches
+          .map(q => q.trim().replace(/^\d+\.\s+|-\s+|•\s+|\*\s+/, ''))
+          .filter(q => q.length > 5 && q.endsWith('?'));
+      }
+    } else {
+      // Fallback to the original method for when sections aren't clearly marked
+      const questionMatches = aiResponse.match(/\d+\.\s+(.+?)(?=\d+\.|$)/gs) || 
+                              aiResponse.match(/\n-\s+(.+)/g) ||
+                              aiResponse.match(/\n•\s+(.+)/g) ||
+                              aiResponse.match(/\*\s+(.+)/g);
+      
+      if (questionMatches && questionMatches.length >= 2) {
+        // If we found what looks like questions, extract them
+        followUpQuestions = questionMatches
+          .map(q => q.trim().replace(/^\d+\.\s+|-\s+|•\s+|\*\s+/, ''))
+          .filter(q => q.length > 5 && q.endsWith('?'));
+        
+        // Remove the questions from the explanation
+        const questionsStartIndex = aiResponse.indexOf(questionMatches[0]);
+        if (questionsStartIndex > 0) {
+          explanation = aiResponse.substring(0, questionsStartIndex).trim();
+        }
+      }
+    }
+    
+    // Make sure we have at least some follow-up questions
+    if (followUpQuestions.length === 0) {
+      // Look for any sentences ending with question marks in the latter part of the response
+      const sentences = aiResponse.split(/(?<=[.!?])\s+/);
+      const questionSentences = sentences.filter(s => s.trim().endsWith('?'));
+      
+      if (questionSentences.length > 0) {
+        followUpQuestions = questionSentences.slice(0, 4);  // Take up to 4 questions
+      }
+    }
+    
+    // Limit to 4 follow-up questions if we have more
+    if (followUpQuestions.length > 4) {
+      followUpQuestions = followUpQuestions.slice(0, 4);
+    }
+    
+    // If we still don't have questions, generate some basic ones
+    if (followUpQuestions.length === 0) {
+      followUpQuestions = [
+        "What are the key points from this content?",
+        "How would you explain this to someone else?",
+        "What questions do you still have about this topic?",
+        "Can you relate this to something you already know?"
+      ];
+    }
+  } catch (error) {
+    console.error('Error processing AI response:', error);
+    // Fall back to original response and default questions
+    followUpQuestions = [
+      "What are the key points from this content?",
+      "How would you explain this to someone else?",
+      "What questions do you still have about this topic?",
+      "Can you relate this to something you already know?"
+    ];
   }
   
   return {

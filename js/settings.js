@@ -161,16 +161,26 @@ function updateModelOptions() {
   switch (provider) {
     case 'openai':
       addOption(apiModelSelect, 'gpt-3.5-turbo', 'GPT-3.5 Turbo');
+      addOption(apiModelSelect, 'gpt-3.5-turbo-16k', 'GPT-3.5 Turbo 16K');
       addOption(apiModelSelect, 'gpt-4', 'GPT-4');
+      addOption(apiModelSelect, 'gpt-4-32k', 'GPT-4 32K');
+      addOption(apiModelSelect, 'gpt-4-turbo', 'GPT-4 Turbo');
+      addOption(apiModelSelect, 'gpt-4o', 'GPT-4o');
       break;
       
     case 'google':
       addOption(apiModelSelect, 'gemini-pro', 'Gemini Pro');
+      addOption(apiModelSelect, 'gemini-1.5-pro', 'Gemini 1.5 Pro');
+      addOption(apiModelSelect, 'gemini-1.5-flash', 'Gemini 1.5 Flash');
       break;
       
     case 'anthropic':
-      addOption(apiModelSelect, 'claude-instant', 'Claude Instant');
+      addOption(apiModelSelect, 'claude-instant-1', 'Claude Instant');
+      addOption(apiModelSelect, 'claude-2', 'Claude 2');
       addOption(apiModelSelect, 'claude-2.1', 'Claude 2.1');
+      addOption(apiModelSelect, 'claude-3-haiku', 'Claude 3 Haiku');
+      addOption(apiModelSelect, 'claude-3-sonnet', 'Claude 3 Sonnet');
+      addOption(apiModelSelect, 'claude-3-opus', 'Claude 3 Opus');
       break;
   }
 }

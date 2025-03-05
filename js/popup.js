@@ -210,10 +210,14 @@ function handleExplainContent() {
 
 // Handle stop audio button click
 function handleStopAudio() {
-  if (speechSynthesis && currentUtterance) {
+  // Cancel any ongoing speech
+  if (speechSynthesis) {
     speechSynthesis.cancel();
     updateStatus('Audio stopped');
     stopBtn.disabled = true;
+    
+    // Clear the utterances array
+    window.teachmeUtterances = [];
   }
   
   // Stop speech recognition if active
@@ -270,6 +274,113 @@ function speakText(text) {
   });
 }
 
+// Improved text-to-speech function that breaks text into chunks
+function speakText(text) {
+  if (!speechSynthesis) {
+    handleError('Text-to-speech not supported in this browser');
+    return;
+  }
+  
+  // Cancel any ongoing speech
+  speechSynthesis.cancel();
+  
+  // Get settings from storage
+  chrome.storage.local.get('settings', data => {
+    const settings = data.settings || { voiceRate: 1.0, voicePitch: 1.0 };
+    
+    // Break the text into sentences
+    const sentences = text.replace(/([.?!])\s*(?=[A-Z])/g, "$1|").split("|");
+    
+    // Group sentences into chunks of approximately 200 characters each
+    const chunks = [];
+    let currentChunk = "";
+    
+    for (const sentence of sentences) {
+      if (currentChunk.length + sentence.length < 200) {
+        currentChunk += sentence + " ";
+      } else {
+        if (currentChunk) {
+          chunks.push(currentChunk.trim());
+        }
+        currentChunk = sentence + " ";
+      }
+    }
+    
+    if (currentChunk) {
+      chunks.push(currentChunk.trim());
+    }
+    
+    // Create an array to store all utterances
+    const utterances = [];
+    
+    // Create utterances for each chunk
+    chunks.forEach((chunk, index) => {
+      const utterance = new SpeechSynthesisUtterance(chunk);
+      utterance.rate = settings.voiceRate;
+      utterance.pitch = settings.voicePitch;
+      
+      // Set events for the first chunk
+      if (index === 0) {
+        utterance.onstart = () => {
+          updateStatus('Speaking explanation...');
+          updateProgressBar(100);
+        };
+      }
+      
+      // Set events for the last chunk
+      if (index === chunks.length - 1) {
+        utterance.onend = () => {
+          updateStatus('Explanation complete');
+          stopBtn.disabled = true;
+          
+          setTimeout(() => {
+            askNextQuestion();
+          }, 1000);
+        };
+      }
+      
+      utterance.onerror = (event) => {
+        handleError('Speech error: ' + event.error);
+      };
+      
+      utterances.push(utterance);
+    });
+    
+    // Store the current utterance array
+    window.teachmeUtterances = utterances;
+    
+    // Function to speak the next chunk
+    const speakNextChunk = (index) => {
+      if (index >= utterances.length) return;
+      
+      const utterance = utterances[index];
+      
+      utterance.onend = (event) => {
+        // Speak the next chunk when this one finishes
+        speakNextChunk(index + 1);
+        
+        // Call the original onend for the last utterance
+        if (index === utterances.length - 1 && utterance.originalOnEnd) {
+          utterance.originalOnEnd(event);
+        }
+      };
+      
+      // Start speaking this chunk
+      speechSynthesis.speak(utterance);
+    };
+    
+    // Start with the first chunk
+    if (utterances.length > 0) {
+      // Store the original onend function for the last utterance
+      if (utterances[utterances.length - 1].onend) {
+        utterances[utterances.length - 1].originalOnEnd = utterances[utterances.length - 1].onend;
+      }
+      
+      speakNextChunk(0);
+    }
+  });
+}
+
 // Ask the next follow-up question
 function askNextQuestion() {
   if (!currentExplanation || !currentExplanation.followUpQuestions || 
@@ -312,6 +423,53 @@ function askNextQuestion() {
     };
     
     // Start speaking
+    speechSynthesis.speak(utterance);
+  });
+}
+
+// Ask the next follow-up question with improved speech synthesis
+function askNextQuestion() {
+  if (!currentExplanation || !currentExplanation.followUpQuestions || 
+      currentExplanation.followUpQuestions.length === 0) {
+    finishSession();
+    return;
+  }
+  
+  currentQuestionIndex++;
+  
+  if (currentQuestionIndex >= currentExplanation.followUpQuestions.length) {
+    finishSession();
+    return;
+  }
+  
+  const question = currentExplanation.followUpQuestions[currentQuestionIndex];
+  const questionText = `Question ${currentQuestionIndex + 1}: ${question}`;
+  
+  // Highlight the current question in the UI
+  updateQuestionHighlight();
+  
+  // Get settings from storage
+  chrome.storage.local.get('settings', data => {
+    const settings = data.settings || { voiceRate: 1.0, voicePitch: 1.0 };
+    
+    // For questions, we can use a simpler approach as they're shorter
+    const utterance = new SpeechSynthesisUtterance(questionText);
+    utterance.rate = settings.voiceRate;
+    utterance.pitch = settings.voicePitch;
+    
+    utterance.onend = () => {
+      // Start listening for response after question is spoken
+      if (recognition) {
+        setTimeout(() => {
+          recognition.start();
+        }, 500);
+      }
+    };
+    
+    // In case there's already speech happening, cancel it
+    speechSynthesis.cancel();
+    
+    // Start speaking the question
     speechSynthesis.speak(utterance);
   });
 }

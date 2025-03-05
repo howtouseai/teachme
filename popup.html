@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Teachme Learning Assistant</title>
+  <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Teachme Learning Assistant</h1>
+    
+    <div class="control-panel">
+      <button id="extractBtn" class="btn primary">Extract Page Content</button>
+      <button id="explainBtn" class="btn primary" disabled>Explain Content</button>
+      <button id="stopBtn" class="btn secondary" disabled>Stop Audio</button>
+    </div>
+    
+    <div class="upload-panel">
+      <p class="upload-label">Or upload a document:</p>
+      <div class="upload-controls">
+        <input type="file" id="fileUpload" accept=".pdf,.txt,.doc,.docx" class="file-input">
+        <label for="fileUpload" class="file-label">Select File</label>
+        <span id="fileName" class="file-name">No file selected</span>
+      </div>
+    </div>
+    
+    <div class="status-panel">
+      <p id="status">Ready to extract content</p>
+      <div class="progress-bar">
+        <div id="progress" class="progress"></div>
+      </div>
+    </div>
+    
+    <div class="content-panel">
+      <h2>Extracted Content</h2>
+      <div id="extractedContent" class="content-box">
+        No content extracted yet.
+      </div>
+    </div>
+    
+    <div class="transcript-panel">
+      <h2>Explanation Transcript</h2>
+      <div id="transcript" class="content-box">
+        No explanation generated yet.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <a href="history.html" target="_blank" class="history-link">History</a>
+      <a href="settings.html" target="_blank" class="settings-link">Settings</a>
+    </div>
+  </div>
+  
+  <script src="js/pdf.min.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/popup.js"></script>
+</body>
+</html> 

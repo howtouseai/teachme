@@ -1,0 +1,278 @@
+body {
+  width: 400px;
+  height: 600px;
+  margin: 0;
+  padding: 16px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+h1 {
+  color: #4285f4;
+  font-size: 1.5rem;
+  margin-top: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: #5f6368;
+}
+
+.control-panel {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.primary {
+  background-color: #4285f4;
+  color: white;
+}
+
+.primary:hover {
+  background-color: #3367d6;
+}
+
+.primary:disabled {
+  background-color: #a6c7ff;
+  cursor: not-allowed;
+}
+
+.secondary {
+  background-color: #f1f3f4;
+  color: #3c4043;
+}
+
+.secondary:hover {
+  background-color: #e8eaed;
+}
+
+.secondary:disabled {
+  color: #9aa0a6;
+  cursor: not-allowed;
+}
+
+.status-panel {
+  margin-bottom: 1rem;
+}
+
+#status {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+}
+
+.progress-bar {
+  height: 4px;
+  background-color: #e8eaed;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 0;
+  background-color: #4285f4;
+  transition: width 0.3s;
+}
+
+.content-box {
+  padding: 8px;
+  background-color: white;
+  border: 1px solid #dadce0;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  overflow-y: auto;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.content-panel .content-box {
+  height: 120px;
+}
+
+.transcript-panel .content-box {
+  flex-grow: 1;
+}
+
+/* New styles for Teachme Q&A interaction */
+.explanation {
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8eaed;
+}
+
+.questions ul {
+  padding-left: 20px;
+}
+
+.question-item {
+  margin-bottom: 12px;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.current-question {
+  background-color: #e8f0fe;
+  border-left: 3px solid #4285f4;
+  padding-left: 12px;
+}
+
+.user-response {
+  margin: 8px 0 16px 16px;
+  padding: 8px;
+  background-color: #f1f8e9;
+  border-radius: 4px;
+  border-left: 3px solid #7cb342;
+}
+
+.user-response p {
+  margin: 4px 0;
+}
+
+.session-summary {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+  border-left: 3px solid #2196f3;
+}
+
+/* Listening indicator animation */
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+}
+
+.listening-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #4285f4;
+  border-radius: 50%;
+  margin-left: 8px;
+  animation: pulse 2s infinite;
+}
+
+/* Make scrollbars more visible */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Footer styling */
+.footer {
+  text-align: right;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+}
+
+.settings-link, .history-link {
+  color: #5f6368;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.settings-link:hover, .history-link:hover {
+  color: #4285f4;
+  text-decoration: underline;
+}
+
+.settings-link::before {
+  content: "⚙️";
+  margin-right: 4px;
+}
+
+.history-link::before {
+  content: "📚";
+  margin-right: 4px;
+}
+
+/* Upload panel styling */
+.upload-panel {
+  margin-bottom: 1rem;
+  background-color: #f1f3f4;
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+
+.upload-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #5f6368;
+}
+
+.upload-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.file-label {
+  background-color: #4285f4;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.file-label:hover {
+  background-color: #3367d6;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #3c4043;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+} 

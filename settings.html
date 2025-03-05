@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Teachme Learning Assistant - Settings</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    
+    h1 {
+      color: #4285f4;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+    }
+    
+    .section-title {
+      color: #5f6368;
+      font-size: 1.2rem;
+      margin-top: 0;
+      border-bottom: 1px solid #e8eaed;
+      padding-bottom: 0.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    input[type="text"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    
+    input[type="checkbox"] {
+      margin-right: 0.5rem;
+    }
+    
+    .slider-container {
+      display: flex;
+      align-items: center;
+    }
+    
+    input[type="range"] {
+      flex-grow: 1;
+      margin-right: 1rem;
+    }
+    
+    .value-display {
+      min-width: 2rem;
+      text-align: center;
+    }
+    
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    button:hover {
+      background-color: #3367d6;
+    }
+    
+    .alert {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .alert-success {
+      background-color: #e6f4ea;
+      border-left: 4px solid #34a853;
+    }
+    
+    .alert-warning {
+      background-color: #fef7e0;
+      border-left: 4px solid #fbbc04;
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    
+    /* Floating notification styles */
+    .floating-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      max-width: 300px;
+    }
+    
+    .floating-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .notification-success {
+      background-color: #34a853;
+      color: white;
+    }
+    
+    .notification-warning {
+      background-color: #fbbc04;
+      color: white;
+    }
+    
+    .notification-error {
+      background-color: #ea4335;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Settings</h1>
+  
+  <div id="status-message"></div>
+  
+  <form id="settingsForm">
+    <div class="card">
+      <h2 class="section-title">API Configuration</h2>
+      
+      <div class="form-group">
+        <label for="apiProvider">API Provider</label>
+        <select id="apiProvider" name="apiProvider">
+          <option value="openai">OpenAI</option>
+          <option value="google">Google AI</option>
+          <option value="anthropic">Anthropic</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="apiKey">API Key</label>
+        <input type="password" id="apiKey" name="apiKey" placeholder="Enter your API key">
+      </div>
+      
+      <div class="form-group">
+        <label for="apiModel">Model</label>
+        <select id="apiModel" name="apiModel">
+          <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+          <option value="gpt-4">GPT-4</option>
+          <option value="gemini-pro">Gemini Pro</option>
+          <option value="claude-instant">Claude Instant</option>
+          <option value="claude-2.1">Claude 2.1</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="useSimulation" name="useSimulation">
+          Use simulation mode (no API calls)
+        </label>
+        <p><small>Enable this if you don't have an API key yet or want to test without using API credits.</small></p>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 class="section-title">Voice Settings</h2>
+      
+      <div class="form-group">
+        <label for="voiceRate">Speech Rate</label>
+        <div class="slider-container">
+          <input type="range" id="voiceRate" name="voiceRate" min="0.5" max="2" step="0.1" value="1.0">
+          <span id="voiceRateValue" class="value-display">1.0</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="voicePitch">Speech Pitch</label>
+        <div class="slider-container">
+          <input type="range" id="voicePitch" name="voicePitch" min="0.5" max="1.5" step="0.1" value="1.0">
+          <span id="voicePitchValue" class="value-display">1.0</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 class="section-title">Content Settings</h2>
+      
+      <div class="form-group">
+        <label for="maxContentLength">Maximum Content Length</label>
+        <input type="number" id="maxContentLength" name="maxContentLength" min="1000" max="20000" value="5000">
+        <p><small>Maximum number of characters to send to the API (higher values may result in higher API costs).</small></p>
+      </div>
+    </div>
+    
+    <div class="buttons">
+      <button type="button" id="resetBtn">Reset to Defaults</button>
+      <button type="submit" id="saveBtn">Save Settings</button>
+    </div>
+  </form>
+  
+  <script src="js/settings.js"></script>
+</body>
+</html> 

@@ -1,0 +1,6 @@
+This is a placeholder for icon48.png.
+
+You need to replace this text file with an actual 48x48 pixel PNG file.
+
+You can use the icon_generator.html file I created to generate simple icons,
+or create your own using an image editor like GIMP, Photoshop, or an online tool. 

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to Teachme Learning Assistant</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      line-height: 1.6;
+      color: #333;
+    }
+    h1 {
+      color: #4285f4;
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    h2 {
+      color: #5f6368;
+      margin-top: 2rem;
+      font-size: 1.5rem;
+    }
+    .card {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .step {
+      display: flex;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .step-number {
+      background-color: #4285f4;
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-right: 1rem;
+      flex-shrink: 0;
+    }
+    .step-content {
+      flex-grow: 1;
+    }
+    .feature-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+    .feature {
+      background-color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .feature h3 {
+      color: #4285f4;
+      margin-top: 0;
+    }
+    .api-setup {
+      background-color: #fffde7;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid #fbc02d;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 3rem;
+      color: #5f6368;
+      font-size: 0.9rem;
+    }
+    button {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .cta {
+      text-align: center;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Teachme Learning Assistant</h1>
+  
+  <div class="card">
+    <p>
+      Thank you for installing Teachme Learning Assistant! This extension helps you understand complex content by explaining it to you and then asking follow-up questions to ensure comprehension – just like the famous Feynman Technique.
+    </p>
+  </div>
+
+  <h2>How It Works</h2>
+  
+  <div class="step">
+    <div class="step-number">1</div>
+    <div class="step-content">
+      <h3>Extract Content</h3>
+      <p>Navigate to any webpage with content you want to understand, click the extension icon, and press "Extract Page Content".</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <div class="step-number">2</div>
+    <div class="step-content">
+      <h3>Listen to Explanation</h3>
+      <p>Click "Explain Content" to hear an AI-generated explanation of the content in simple terms.</p>
+    </div>
+  </div>
+  
+  <div class="step">
+    <div class="step-number">3</div>
+    <div class="step-content">
+      <h3>Answer Follow-up Questions</h3>
+      <p>The assistant will ask you questions to check your understanding, helping you identify any gaps in your knowledge.</p>
+    </div>
+  </div>
+  
+  <h2>Key Features</h2>
+  
+  <div class="feature-list">
+    <div class="feature">
+      <h3>Content Extraction</h3>
+      <p>Automatically extracts the main content from web pages, filtering out menus, ads, and other distractions.</p>
+    </div>
+    
+    <div class="feature">
+      <h3>Audio Explanations</h3>
+      <p>Converts complex content into clear, spoken explanations that are easy to understand.</p>
+    </div>
+    
+    <div class="feature">
+      <h3>Feynman Technique</h3>
+      <p>Uses the proven learning method developed by Nobel Prize-winning physicist Richard Feynman.</p>
+    </div>
+  </div>
+  
+  <div class="api-setup">
+    <h3>Important: API Key Setup (Coming Soon)</h3>
+    <p>
+      This is a proof-of-concept version with simulated AI responses. In a future update, you'll need to provide your own API key to connect to a language model service.
+    </p>
+  </div>
+  
+  <div class="cta">
+    <button id="getStartedBtn">Get Started</button>
+  </div>
+  
+  <div class="footer">
+    <p>Teachme Learning Assistant v1.0 | <a href="https://github.com/yourusername/teachme-assistant" target="_blank">GitHub</a></p>
+  </div>
+
+  <script>
+    // Add event listener for the Get Started button
+    document.getElementById('getStartedBtn').addEventListener('click', function() {
+      // Try to close the tab
+      try {
+        // First method: try to close the window
+        window.close();
+        
+        // If that doesn't work, try to use chrome.tabs API
+        if (chrome && chrome.tabs) {
+          chrome.tabs.getCurrent(function(tab) {
+            if (tab) {
+              chrome.tabs.remove(tab.id);
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Could not close the tab:', error);
+        // Fallback - just show a message
+        alert('Setup complete! You can close this tab and start using the extension.');
+      }
+    });
+  </script>
+</body>
+</html> 

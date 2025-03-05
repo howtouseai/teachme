@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Teachme Learning Assistant - Learning History</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    
+    h1 {
+      color: #4285f4;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      padding: 1.5rem;
+      transition: transform 0.2s;
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #5f6368;
+    }
+    
+    .empty-state img {
+      opacity: 0.5;
+      margin-bottom: 1rem;
+      width: 100px;
+    }
+    
+    .session-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e8eaed;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .session-title {
+      font-weight: 500;
+      font-size: 1.1rem;
+      color: #4285f4;
+      margin: 0;
+    }
+    
+    .session-date {
+      color: #5f6368;
+      font-size: 0.9rem;
+    }
+    
+    .session-content {
+      margin-bottom: 1rem;
+    }
+    
+    .session-questions {
+      background-color: #f8f9fa;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-top: 1rem;
+    }
+    
+    .session-questions h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      color: #5f6368;
+    }
+    
+    .session-questions ul {
+      margin: 0;
+      padding-left: 1.5rem;
+    }
+    
+    .session-questions li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .action-buttons {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .btn {
+      padding: 0.5rem 0.75rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      background-color: #f1f3f4;
+      color: #3c4043;
+    }
+    
+    .btn:hover {
+      background-color: #e8eaed;
+    }
+    
+    .btn-primary {
+      background-color: #4285f4;
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #3367d6;
+    }
+    
+    .btn-danger {
+      background-color: #ea4335;
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      background-color: #d93025;
+    }
+    
+    .top-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .search-box {
+      padding: 0.5rem;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      width: 250px;
+    }
+
+    .floating-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      max-width: 300px;
+    }
+    
+    .floating-notification.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .notification-success {
+      background-color: #34a853;
+      color: white;
+    }
+    
+    .notification-warning {
+      background-color: #fbbc04;
+      color: white;
+    }
+    
+    .notification-error {
+      background-color: #ea4335;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>Learning History</h1>
+  
+  <div class="top-actions">
+    <input type="text" id="searchBox" class="search-box" placeholder="Search your learning history...">
+    <button id="clearAllBtn" class="btn btn-danger">Clear All History</button>
+  </div>
+  
+  <div id="historyContainer">
+    <!-- History items will be loaded here -->
+    <div class="empty-state">
+      <p>You haven't completed any learning sessions yet.</p>
+      <p>Use the Teachme extension on webpages to start learning!</p>
+    </div>
+  </div>
+  
+  <script src="js/history.js"></script>
+</body>
+</html> 

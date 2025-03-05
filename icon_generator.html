@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Teachme Extension Icon Generator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    
+    h1 {
+      color: #4285f4;
+      margin-bottom: 1.5rem;
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+    }
+    
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .control-group {
+      flex: 1;
+      min-width: 200px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    input[type="color"],
+    input[type="range"],
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+    }
+    
+    .canvas-container {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    
+    .canvas-wrapper {
+      text-align: center;
+    }
+    
+    canvas {
+      border: 1px solid #dadce0;
+      background-color: white;
+      margin-bottom: 0.5rem;
+    }
+    
+    .btn {
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .btn:hover {
+      background-color: #3367d6;
+    }
+    
+    .secondary-btn {
+      background-color: #f1f3f4;
+      color: #3c4043;
+    }
+    
+    .secondary-btn:hover {
+      background-color: #e8eaed;
+    }
+    
+    .instructions {
+      margin-top: 2rem;
+      line-height: 1.6;
+    }
+    
+    code {
+      background-color: #f1f3f4;
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teachme Extension Icon Generator</h1>
+  
+  <div class="card">
+    <h2>Design Your Icon</h2>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label for="backgroundColor">Background Color</label>
+        <input type="color" id="backgroundColor" value="#4285f4">
+      </div>
+      
+      <div class="control-group">
+        <label for="textColor">Text Color</label>
+        <input type="color" id="textColor" value="#ffffff">
+      </div>
+      
+      <div class="control-group">
+        <label for="iconText">Icon Text (1-2 characters)</label>
+        <input type="text" id="iconText" value="F" maxlength="2">
+      </div>
+      
+      <div class="control-group">
+        <label for="iconStyle">Icon Style</label>
+        <select id="iconStyle">
+          <option value="circle">Circle</option>
+          <option value="rounded-square">Rounded Square</option>
+          <option value="square">Square</option>
+        </select>
+      </div>
+      
+      <div class="control-group">
+        <label for="borderWidth">Border Width</label>
+        <input type="range" id="borderWidth" min="0" max="10" value="0">
+      </div>
+      
+      <div class="control-group">
+        <label for="borderColor">Border Color</label>
+        <input type="color" id="borderColor" value="#ffffff">
+      </div>
+    </div>
+    
+    <button id="generateBtn" class="btn">Generate Icons</button>
+  </div>
+  
+  <div class="card">
+    <h2>Preview</h2>
+    <div class="canvas-container">
+      <div class="canvas-wrapper">
+        <canvas id="canvas16" width="16" height="16"></canvas>
+        <p>16x16</p>
+        <button class="btn secondary-btn download-btn" data-size="16">Download</button>
+      </div>
+      
+      <div class="canvas-wrapper">
+        <canvas id="canvas48" width="48" height="48"></canvas>
+        <p>48x48</p>
+        <button class="btn secondary-btn download-btn" data-size="48">Download</button>
+      </div>
+      
+      <div class="canvas-wrapper">
+        <canvas id="canvas128" width="128" height="128"></canvas>
+        <p>128x128</p>
+        <button class="btn secondary-btn download-btn" data-size="128">Download</button>
+      </div>
+    </div>
+    
+    <button id="downloadAllBtn" class="btn">Download All</button>
+  </div>
+  
+  <div class="instructions">
+    <h2>How to Use These Icons</h2>
+    <ol>
+      <li>Download the generated icons (16x16, 48x48, and 128x128 pixels)</li>
+      <li>Create an <code>images</code> folder in your extension directory</li>
+      <li>Move the downloaded icons to the <code>images</code> folder</li>
+      <li>Rename them to <code>icon16.png</code>, <code>icon48.png</code>, and <code>icon128.png</code></li>
+      <li>Your extension will now display these icons in Chrome</li>
+    </ol>
+  </div>
+  
+  <script>
+    // DOM elements
+    const backgroundColor = document.getElementById('backgroundColor');
+    const textColor = document.getElementById('textColor');
+    const iconText = document.getElementById('iconText');
+    const iconStyle = document.getElementById('iconStyle');
+    const borderWidth = document.getElementById('borderWidth');
+    const borderColor = document.getElementById('borderColor');
+    const generateBtn = document.getElementById('generateBtn');
+    const downloadAllBtn = document.getElementById('downloadAllBtn');
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    
+    // Canvas elements
+    const canvas16 = document.getElementById('canvas16');
+    const canvas48 = document.getElementById('canvas48');
+    const canvas128 = document.getElementById('canvas128');
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Generate initial icons
+      generateIcons();
+      
+      // Set up event listeners
+      generateBtn.addEventListener('click', generateIcons);
+      downloadAllBtn.addEventListener('click', downloadAllIcons);
+      
+      downloadButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          const size = e.target.getAttribute('data-size');
+          downloadIcon(size);
+        });
+      });
+      
+      // Live updates when controls change
+      const controls = [backgroundColor, textColor, iconText, iconStyle, borderWidth, borderColor];
+      controls.forEach(control => {
+        control.addEventListener('input', generateIcons);
+      });
+    });
+    
+    // Generate icons based on user input
+    function generateIcons() {
+      const bgColor = backgroundColor.value;
+      const txtColor = textColor.value;
+      const text = iconText.value || 'F';
+      const style = iconStyle.value;
+      const bWidth = parseInt(borderWidth.value);
+      const bColor = borderColor.value;
+      
+      drawIcon(canvas16, 16, bgColor, txtColor, text, style, bWidth, bColor);
+      drawIcon(canvas48, 48, bgColor, txtColor, text, style, bWidth, bColor);
+      drawIcon(canvas128, 128, bgColor, txtColor, text, style, bWidth, bColor);
+    }
+    
+    // Draw a single icon on a canvas
+    function drawIcon(canvas, size, bgColor, txtColor, text, style, borderWidth, borderColor) {
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, size, size);
+      
+      // Calculate dimensions
+      const padding = Math.max(1, Math.round(size * 0.1));
+      const radius = style === 'circle' ? size / 2 : (style === 'rounded-square' ? size * 0.2 : 0);
+      
+      // Draw background
+      ctx.fillStyle = bgColor;
+      ctx.beginPath();
+      if (style === 'circle') {
+        ctx.arc(size/2, size/2, size/2 - borderWidth/2, 0, Math.PI * 2);
+      } else {
+        roundedRect(ctx, borderWidth/2, borderWidth/2, size - borderWidth, size - borderWidth, radius);
+      }
+      ctx.fill();
+      
+      // Draw border if needed
+      if (borderWidth > 0) {
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = borderWidth;
+        ctx.stroke();
+      }
+      
+      // Draw text
+      ctx.fillStyle = txtColor;
+      const fontSize = Math.max(1, Math.round(size * 0.6));
+      ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, size/2, size/2);
+    }
+    
+    // Helper function to draw rounded rectangles
+    function roundedRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+    
+    // Download a single icon
+    function downloadIcon(size) {
+      const canvas = document.getElementById(`canvas${size}`);
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+    
+    // Download all icons
+    function downloadAllIcons() {
+      downloadIcon('16');
+      downloadIcon('48');
+      downloadIcon('128');
+    }
+  </script>
+</body>
+</html> 

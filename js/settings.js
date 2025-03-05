@@ -53,10 +53,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Toggle API key field based on simulation mode
   useSimulationCheckbox.addEventListener('change', () => {
     apiKeyInput.disabled = useSimulationCheckbox.checked;
+    
     if (useSimulationCheckbox.checked) {
       apiKeyInput.placeholder = 'Disabled in simulation mode';
+      apiKeyInput.parentElement.classList.add('api-key-disabled');
     } else {
       apiKeyInput.placeholder = 'Enter your API key';
+      apiKeyInput.parentElement.classList.remove('api-key-disabled');
+    }
+    
+    // Ensure the visual state matches
+    if (apiKeyInput.disabled) {
+      apiKeyInput.style.backgroundColor = '#f5f5f5';
+      apiKeyInput.style.color = '#999';
+    } else {
+      apiKeyInput.style.backgroundColor = '#fff';
+      apiKeyInput.style.color = '#333';
     }
   });
 });

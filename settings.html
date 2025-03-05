@@ -13,6 +13,49 @@
       color: #333;
     }
     
+    /* Add these new styles for the API key and simulation mode */
+    .api-key-container {
+      display: flex;
+      margin-bottom: 0.5rem;
+    }
+    
+    .simulation-toggle {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      background: #f1f3f4;
+      padding: 0 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      user-select: none;
+    }
+    
+    .simulation-toggle:hover {
+      background: #e8eaed;
+    }
+    
+    .simulation-toggle input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    
+    .simulation-toggle label {
+      font-weight: normal;
+      margin-bottom: 0;
+      cursor: pointer;
+    }
+    
+    input[type="password"]:disabled {
+      background-color: #f5f5f5;
+      color: #999;
+      border-color: #e0e0e0;
+    }
+    
+    .api-key-disabled {
+      opacity: 0.7;
+    }
+    /* End of new styles */
+    
     h1 {
       color: #4285f4;
       margin-bottom: 1.5rem;
@@ -166,8 +209,16 @@
       
       <div class="form-group">
         <label for="apiKey">API Key</label>
-        <input type="password" id="apiKey" name="apiKey" placeholder="Enter your API key">
-        <div id="apiKeyHelp" class="help-text" style="font-size: 0.8rem; margin-top: 0.5rem; color: #5f6368;">
+        <div class="api-key-container">
+          <input type="password" id="apiKey" name="apiKey" placeholder="Enter your API key" style="flex-grow: 1; margin-right: 10px;">
+          <div class="simulation-toggle">
+            <input type="checkbox" id="useSimulation" name="useSimulation">
+            <label for="useSimulation">Use simulation</label>
+          </div>
+        </div>
+        <p><small style="color: #5f6368;">Enable simulation mode if you don't have an API key yet or want to test without using API credits.</small></p>
+        
+        <div id="apiKeyHelp" class="help-text" style="font-size: 0.8rem; margin-top: 0.5rem; color: #5f6368; border-left: 3px solid #dadce0; padding-left: 10px;">
           <p>You'll need to obtain an API key from your selected provider:</p>
           <ul>
             <li><strong>OpenAI:</strong> Get your API key from the <a href="https://platform.openai.com/account/api-keys" target="_blank">OpenAI dashboard</a></li>
@@ -187,14 +238,6 @@
           <option value="claude-instant">Claude Instant</option>
           <option value="claude-2.1">Claude 2.1</option>
         </select>
-      </div>
-      
-      <div class="form-group">
-        <label>
-          <input type="checkbox" id="useSimulation" name="useSimulation">
-          Use simulation mode (no API calls)
-        </label>
-        <p><small>Enable this if you don't have an API key yet or want to test without using API credits.</small></p>
       </div>
     </div>
     
